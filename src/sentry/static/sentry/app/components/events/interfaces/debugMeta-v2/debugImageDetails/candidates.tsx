@@ -322,7 +322,7 @@ class Candidates extends React.Component<Props, State> {
               <StyledSearchBar
                 query={searchTerm}
                 onChange={value => this.handleChangeSearchTerm(value)}
-                placeholder={t('Search debug files')}
+                placeholder={t('Search debug file candidates')}
               />
             </Search>
           )}
@@ -330,7 +330,7 @@ class Candidates extends React.Component<Props, State> {
         <StyledPanelTable
           headers={[
             t('Status'),
-            t('Location'),
+            t('Information'),
             t('Processing'),
             t('Features'),
             t('Actions'),

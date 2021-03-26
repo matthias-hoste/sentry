@@ -16,18 +16,18 @@ import {CandidateDownloadStatus, ImageCandidate} from 'app/types/debugImage';
 type Props = {
   candidate: ImageCandidate;
   organization: Organization;
+  isInternalSource: boolean;
   baseUrl: string;
   projectId: string;
-  isInternalSource: boolean;
   onDelete: (debugFileId: string) => void;
 };
 
 function Actions({
   candidate,
   organization,
+  isInternalSource,
   baseUrl,
   projectId,
-  isInternalSource,
   onDelete,
 }: Props) {
   const {download, location: debugFileId} = candidate;
