@@ -33,7 +33,7 @@ function Actions({
   const {download, location: debugFileId} = candidate;
 
   if (!debugFileId || !isInternalSource) {
-    return <NotAvailable />;
+    return <NotAvailable tooltip={t('Actions not available')} />;
   }
 
   const {status} = download;
@@ -101,7 +101,7 @@ function Actions({
     return actions;
   }
 
-  return <Tooltip title={t('Actions not available.')}>{actions}</Tooltip>;
+  return <Tooltip title={t('Actions not available')}>{actions}</Tooltip>;
 }
 
 export default Actions;

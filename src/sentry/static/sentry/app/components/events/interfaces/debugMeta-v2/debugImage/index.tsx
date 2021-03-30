@@ -8,9 +8,8 @@ import {t} from 'app/locale';
 import space from 'app/styles/space';
 import {Image, ImageStatus} from 'app/types/debugImage';
 
-import Address from '../address';
 import layout from '../layout';
-import {getFileName} from '../utils';
+import {getFileName, getImageAddress} from '../utils';
 
 import Processings from './processings';
 import Status from './status';
@@ -28,7 +27,7 @@ function DebugImage({image, onOpenImageDetailsModal, style}: Props) {
   const {unwind_status, debug_status, debug_id, code_file, code_id, status} = image;
 
   const fileName = getFileName(code_file);
-  const imageAddress = <Address image={image} />;
+  const imageAddress = getImageAddress(image);
 
   return (
     <Wrapper style={style}>
@@ -41,7 +40,7 @@ function DebugImage({image, onOpenImageDetailsModal, style}: Props) {
             <FileName>{fileName}</FileName>
           </Tooltip>
         )}
-        <ImageAddress>{imageAddress}</ImageAddress>
+        {imageAddress && <ImageAddress>{imageAddress}</ImageAddress>}
       </ImageColumn>
       <Column>
         {unwind_status || debug_status ? (

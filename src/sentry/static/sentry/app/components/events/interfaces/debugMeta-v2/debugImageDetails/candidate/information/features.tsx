@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from '@emotion/styled';
 
-import NotAvailable from 'app/components/notAvailable';
 import QuestionTooltip from 'app/components/questionTooltip';
 import space from 'app/styles/space';
 import {
@@ -10,7 +9,7 @@ import {
   CandidateFeatures,
 } from 'app/types/debugImage';
 
-import {getFeatureLabel} from './utils';
+import {getFeatureLabel} from '../utils';
 
 type Props = {
   download: CandidateDownload;
@@ -22,13 +21,13 @@ function Features({download}: Props) {
     download.status !== CandidateDownloadStatus.DELETED &&
     download.status !== CandidateDownloadStatus.UNAPPLIED
   ) {
-    return <NotAvailable />;
+    return null;
   }
 
   const features = Object.entries(download.features).filter(([_key, value]) => value);
 
   if (!features.length) {
-    return <NotAvailable />;
+    return null;
   }
 
   return (
@@ -54,6 +53,7 @@ const Wrapper = styled('div')`
   grid-column-gap: ${space(1.5)};
   font-size: ${p => p.theme.fontSizeSmall};
   color: ${p => p.theme.gray300};
+  justify-content: flex-start;
 `;
 
 const Feature = styled('div')`

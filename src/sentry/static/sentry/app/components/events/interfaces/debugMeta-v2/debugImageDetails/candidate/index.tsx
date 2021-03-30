@@ -5,11 +5,11 @@ import {Organization, Project} from 'app/types';
 import {BuiltinSymbolSource} from 'app/types/debugFiles';
 import {ImageCandidate} from 'app/types/debugImage';
 
+import {INTERNAL_SOURCE} from '../utils';
+
+import StatusTooltip from './status/statusTooltip';
 import Actions from './actions';
-import Features from './features';
 import Information from './information';
-import Processings from './processings';
-import StatusTooltip from './statusTooltip';
 
 type Props = {
   candidate: ImageCandidate;
@@ -17,6 +17,7 @@ type Props = {
   organization: Organization;
   projectId: Project['slug'];
   baseUrl: string;
+  eventDateCreated: string;
   onDelete: (debugFileId: string) => void;
 };
 
@@ -26,9 +27,11 @@ function Candidate({
   organization,
   projectId,
   baseUrl,
+  eventDateCreated,
   onDelete,
 }: Props) {
-  const {download} = candidate;
+  const {source} = candidate;
+  const isInternalSource = source === INTERNAL_SOURCE;
 
   return (
     <React.Fragment>
@@ -36,27 +39,25 @@ function Candidate({
         <StatusTooltip candidate={candidate} />
       </Column>
 
-      <DebugFileColumn>
-        <Information candidate={candidate} builtinSymbolSources={builtinSymbolSources} />
-      </DebugFileColumn>
+      <InformationColumn>
+        <Information
+          candidate={candidate}
+          builtinSymbolSources={builtinSymbolSources}
+          isInternalSource={isInternalSource}
+          eventDateCreated={eventDateCreated}
+        />
+      </InformationColumn>
 
-      <Column>
-        <Processings candidate={candidate} />
-      </Column>
-
-      <Column>
-        <Features download={download} />
-      </Column>
-
-      <Column>
+      <ActionsColumn>
         <Actions
           onDelete={onDelete}
           baseUrl={baseUrl}
           projectId={projectId}
           organization={organization}
           candidate={candidate}
+          isInternalSource={isInternalSource}
         />
-      </Column>
+      </ActionsColumn>
     </React.Fragment>
   );
 }
@@ -68,8 +69,11 @@ const Column = styled('div')`
   align-items: center;
 `;
 
-// Debug File Info Column
-const DebugFileColumn = styled(Column)`
+const InformationColumn = styled(Column)`
   flex-direction: column;
   align-items: flex-start;
+`;
+
+const ActionsColumn = styled(Column)`
+  justify-content: flex-end;
 `;

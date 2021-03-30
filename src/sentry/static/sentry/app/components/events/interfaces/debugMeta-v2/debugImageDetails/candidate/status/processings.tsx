@@ -1,14 +1,13 @@
 import React from 'react';
 
-import NotAvailable from 'app/components/notAvailable';
 import {
   CandidateDownloadStatus,
   ImageCandidate,
   ImageCandidateOk,
 } from 'app/types/debugImage';
 
-import ProcessingItem from '../../processing/item';
-import ProcessingList from '../../processing/list';
+import ProcessingItem from '../../../processing/item';
+import ProcessingList from '../../../processing/list';
 
 import ProcessingIcon from './processingIcon';
 
@@ -23,7 +22,7 @@ function Processings({candidate}: Props) {
     candidate.download.status !== CandidateDownloadStatus.OK &&
     candidate.download.status !== CandidateDownloadStatus.DELETED
   ) {
-    return <NotAvailable />;
+    return null;
   }
 
   const {debug, unwind} = candidate as ImageCandidateOk;

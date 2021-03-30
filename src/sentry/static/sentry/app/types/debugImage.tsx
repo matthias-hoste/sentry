@@ -91,6 +91,11 @@ export type ImageCandidateOk = ImageCandidateBase & {
 export type ImageCandidateUnApplied = ImageCandidateBase & {
   download: CandidateDownloadUnAppliedStatus;
   filename: string;
+  symbolType: string;
+  fileType: string | null;
+  cpuName: string;
+  size: number;
+  dateCreated: string;
   source: string;
   source_name?: string;
   location?: string;

@@ -10,7 +10,6 @@ import AlertLink from 'app/components/alertLink';
 import AsyncComponent from 'app/components/asyncComponent';
 import Button from 'app/components/button';
 import ButtonBar from 'app/components/buttonBar';
-import NotAvailable from 'app/components/notAvailable';
 import {t} from 'app/locale';
 import space from 'app/styles/space';
 import {Organization, Project} from 'app/types';
@@ -19,12 +18,12 @@ import {CandidateDownloadStatus, Image, ImageStatus} from 'app/types/debugImage'
 import {Event} from 'app/types/event';
 import {displayReprocessEventAction} from 'app/utils/displayReprocessEventAction';
 import theme from 'app/utils/theme';
+import {getFileType} from 'app/views/settings/projectDebugFiles/utils';
 
-import Address from '../address';
-import Processings from '../debugImage/processings';
 import {getFileName} from '../utils';
 
 import Candidates from './candidates';
+import GeneralInfo from './generalInfo';
 import {INTERNAL_SOURCE, INTERNAL_SOURCE_LOCATION} from './utils';
 
 type ImageCandidates = Image['candidates'];
@@ -165,7 +164,18 @@ class DebugImageDetails extends AsyncComponent<Props, State> {
     const unAppliedCandidates = debugFiles
       .filter(debugFile => !candidateLocations.has(debugFile.id))
       .map(debugFile => {
-        const features = debugFile.data?.features ?? [];
+        const {
+          data,
+          symbolType,
+          objectName: filename,
+          id: location,
+          size,
+          dateCreated,
+          cpuName,
+        } = debugFile;
+
+        const features = data?.features ?? [];
+
         return {
           download: {
             status: CandidateDownloadStatus.UNAPPLIED,
@@ -176,8 +186,13 @@ class DebugImageDetails extends AsyncComponent<Props, State> {
               has_symbols: features.includes(DebugFileFeature.SYMTAB),
             },
           },
-          location: debugFile.id,
-          filename: debugFile.objectName,
+          cpuName,
+          location,
+          filename,
+          size,
+          dateCreated,
+          symbolType,
+          fileType: getFileType(debugFile),
           source: INTERNAL_SOURCE,
           source_name: t('Sentry'),
         };
@@ -205,18 +220,6 @@ class DebugImageDetails extends AsyncComponent<Props, State> {
     }) as ImageCandidates;
 
     return this.sortCandidates(convertedCandidates, unAppliedCandidates);
-  }
-
-  getDebugFilesSettingsLink() {
-    const {organization, projectId, image} = this.props;
-    const orgSlug = organization.slug;
-    const debugId = image?.debug_id;
-
-    if (!orgSlug || !projectId || !debugId) {
-      return undefined;
-    }
-
-    return `/settings/${orgSlug}/projects/${projectId}/debug-symbols/?query=${debugId}`;
   }
 
   handleDelete = async (debugId: string) => {
@@ -253,23 +256,12 @@ class DebugImageDetails extends AsyncComponent<Props, State> {
     } = this.props;
     const {loading, builtinSymbolSources} = this.state;
 
-    const {
-      debug_id,
-      debug_file,
-      code_file,
-      code_id,
-      arch: architecture,
-      unwind_status,
-      debug_status,
-      status,
-    } = image ?? {};
+    const {code_file, status} = image ?? {};
 
     const candidates = this.getCandidates();
     const baseUrl = this.api.baseUrl;
 
     const fileName = getFileName(code_file);
-    const imageAddress = image ? <Address image={image} /> : undefined;
-    const debugFilesSettingsLink = this.getDebugFilesSettingsLink();
     const haveCandidatesUnappliedDebugFile = candidates.some(
       candidate => candidate.download.status === CandidateDownloadStatus.UNAPPLIED
     );
@@ -284,37 +276,7 @@ class DebugImageDetails extends AsyncComponent<Props, State> {
         </Header>
         <Body>
           <Content>
-            <GeneralInfo>
-              <Label coloredBg>{t('Address Range')}</Label>
-              <Value coloredBg>{imageAddress ?? <NotAvailable />}</Value>
-
-              <Label>{t('Debug ID')}</Label>
-              <Value>{debug_id ?? <NotAvailable />}</Value>
-
-              <Label coloredBg>{t('Debug File')}</Label>
-              <Value coloredBg>{debug_file ?? <NotAvailable />}</Value>
-
-              <Label>{t('Code ID')}</Label>
-              <Value>{code_id ?? <NotAvailable />}</Value>
-
-              <Label coloredBg>{t('Code File')}</Label>
-              <Value coloredBg>{code_file ?? <NotAvailable />}</Value>
-
-              <Label>{t('Architecture')}</Label>
-              <Value>{architecture ?? <NotAvailable />}</Value>
-
-              <Label coloredBg>{t('Processing')}</Label>
-              <Value coloredBg>
-                {unwind_status || debug_status ? (
-                  <Processings
-                    unwind_status={unwind_status}
-                    debug_status={debug_status}
-                  />
-                ) : (
-                  <NotAvailable />
-                )}
-              </Value>
-            </GeneralInfo>
+            <GeneralInfo image={image} />
             {haveCandidatesUnappliedDebugFile &&
               displayReprocessEventAction(organization.features, event) &&
               onReprocessEvent && (
@@ -335,9 +297,10 @@ class DebugImageDetails extends AsyncComponent<Props, State> {
               organization={organization}
               projectId={projectId}
               baseUrl={baseUrl}
-              onDelete={this.handleDelete}
               isLoading={loading}
+              eventDateCreated={event.dateCreated}
               builtinSymbolSources={builtinSymbolSources}
+              onDelete={this.handleDelete}
             />
           </Content>
         </Body>
@@ -349,17 +312,6 @@ class DebugImageDetails extends AsyncComponent<Props, State> {
             >
               {t('Read the docs')}
             </Button>
-            {debugFilesSettingsLink && (
-              <Button
-                title={t(
-                  'Search for this debug file in all images for the %s project',
-                  projectId
-                )}
-                to={debugFilesSettingsLink}
-              >
-                {t('Search this image in settings')}
-              </Button>
-            )}
           </ButtonBar>
         </Footer>
       </React.Fragment>
@@ -371,28 +323,8 @@ export default DebugImageDetails;
 
 const Content = styled('div')`
   display: grid;
-  grid-gap: ${space(3)};
+  grid-gap: ${space(4)};
   font-size: ${p => p.theme.fontSizeMedium};
-`;
-
-const GeneralInfo = styled('div')`
-  display: grid;
-  grid-template-columns: max-content 1fr;
-`;
-
-const Label = styled('div')<{coloredBg?: boolean}>`
-  color: ${p => p.theme.textColor};
-  ${p => p.coloredBg && `background-color: ${p.theme.backgroundSecondary};`}
-  padding: ${space(1)} ${space(1.5)} ${space(1)} ${space(1)};
-`;
-
-const Value = styled(Label)`
-  color: ${p => p.theme.subText};
-  ${p => p.coloredBg && `background-color: ${p.theme.backgroundSecondary};`}
-  padding: ${space(1)};
-  font-family: ${p => p.theme.text.familyMono};
-  white-space: pre-wrap;
-  word-break: break-all;
 `;
 
 const Title = styled('div')`
@@ -413,21 +345,10 @@ const FileName = styled('span')`
 `;
 
 export const modalCss = css`
-  .modal-content {
-    overflow: initial;
-  }
-
-  @media (min-width: ${theme.breakpoints[0]}) {
-    .modal-dialog {
-      width: 55%;
-      margin-left: -27.5%;
-    }
-  }
-
-  @media (min-width: ${theme.breakpoints[3]}) {
-    .modal-dialog {
-      width: 70%;
-      margin-left: -35%;
-    }
+  .modal-dialog {
+    position: unset;
+    width: 100%;
+    max-width: 800px;
+    margin: 80px auto;
   }
 `;
