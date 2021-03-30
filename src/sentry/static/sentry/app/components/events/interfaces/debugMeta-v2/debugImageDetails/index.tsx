@@ -17,6 +17,7 @@ import {BuiltinSymbolSource, DebugFile, DebugFileFeature} from 'app/types/debugF
 import {CandidateDownloadStatus, Image, ImageStatus} from 'app/types/debugImage';
 import {Event} from 'app/types/event';
 import {displayReprocessEventAction} from 'app/utils/displayReprocessEventAction';
+import theme from 'app/utils/theme';
 import {getFileType} from 'app/views/settings/projectDebugFiles/utils';
 
 import {getFileName} from '../utils';
@@ -238,6 +239,18 @@ class DebugImageDetails extends AsyncComponent<Props, State> {
     }
   };
 
+  getDebugFilesSettingsLink() {
+    const {organization, projectId, image} = this.props;
+    const orgSlug = organization.slug;
+    const debugId = image?.debug_id;
+
+    if (!orgSlug || !projectId || !debugId) {
+      return undefined;
+    }
+
+    return `/settings/${orgSlug}/projects/${projectId}/debug-symbols/?query=${debugId}`;
+  }
+
   renderLoading() {
     return this.renderBody();
   }
@@ -257,6 +270,7 @@ class DebugImageDetails extends AsyncComponent<Props, State> {
 
     const {code_file, status} = image ?? {};
 
+    const debugFilesSettingsLink = this.getDebugFilesSettingsLink();
     const candidates = this.getCandidates();
     const baseUrl = this.api.baseUrl;
 
@@ -311,6 +325,17 @@ class DebugImageDetails extends AsyncComponent<Props, State> {
             >
               {t('Read the docs')}
             </Button>
+            {debugFilesSettingsLink && (
+              <Button
+                title={t(
+                  'Search for this debug file in all images for the %s project',
+                  projectId
+                )}
+                to={debugFilesSettingsLink}
+              >
+                {t('Open in Settings')}
+              </Button>
+            )}
           </ButtonBar>
         </Footer>
       </React.Fragment>
@@ -344,10 +369,23 @@ const FileName = styled('span')`
 `;
 
 export const modalCss = css`
-  .modal-dialog {
-    position: unset;
-    width: 100%;
-    max-width: 800px;
-    margin: 80px auto;
+  .modal-content {
+    overflow: initial;
+  }
+
+  width: 100%;
+
+  @media (min-width: ${theme.breakpoints[0]}) {
+    .modal-dialog {
+      width: 55%;
+      margin-left: -27.5%;
+    }
+  }
+
+  @media (min-width: ${theme.breakpoints[3]}) {
+    .modal-dialog {
+      width: 50%;
+      margin-left: -25%;
+    }
   }
 `;

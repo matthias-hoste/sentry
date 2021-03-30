@@ -16,6 +16,7 @@ type Props = {
 };
 
 function Features({download}: Props) {
+  console.log('download', download);
   if (
     download.status !== CandidateDownloadStatus.OK &&
     download.status !== CandidateDownloadStatus.DELETED &&
@@ -24,6 +25,7 @@ function Features({download}: Props) {
     return null;
   }
 
+  console.log('x', download.features);
   const features = Object.entries(download.features).filter(([_key, value]) => value);
 
   if (!features.length) {

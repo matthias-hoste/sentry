@@ -24,9 +24,18 @@ type Props = {
 };
 
 function DebugImage({image, onOpenImageDetailsModal, style}: Props) {
-  const {unwind_status, debug_status, debug_id, code_file, code_id, status} = image;
+  const {
+    unwind_status,
+    debug_status,
+    debug_file,
+    debug_id,
+    code_file,
+    code_id,
+    status,
+  } = image;
 
-  const fileName = getFileName(code_file);
+  const codeFileName = getFileName(code_file);
+  const debugFileName = getFileName(debug_file);
   const imageAddress = getImageAddress(image);
 
   return (
@@ -35,9 +44,9 @@ function DebugImage({image, onOpenImageDetailsModal, style}: Props) {
         <Status status={status} />
       </StatusColumn>
       <ImageColumn>
-        {fileName && (
+        {codeFileName && (
           <Tooltip title={code_file}>
-            <FileName>{fileName}</FileName>
+            <FileName>{codeFileName}</FileName>
           </Tooltip>
         )}
         {imageAddress && <ImageAddress>{imageAddress}</ImageAddress>}

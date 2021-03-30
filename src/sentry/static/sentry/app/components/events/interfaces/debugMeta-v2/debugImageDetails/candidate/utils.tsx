@@ -92,22 +92,7 @@ export function getStatusTooltipDescription(candidate: ImageCandidate) {
       };
     }
     case CandidateDownloadStatus.NOT_FOUND: {
-      const {details} = download;
-      return {
-        label: (
-          <React.Fragment>
-            {t('No debug file was not found at this location')}
-            {':'}
-          </React.Fragment>
-        ),
-        description: (
-          <React.Fragment>
-            <p>{location}</p>
-            {details && <p>{details}</p>}
-          </React.Fragment>
-        ),
-        disabled: !location || source === INTERNAL_SOURCE,
-      };
+      return {};
     }
     case CandidateDownloadStatus.NO_PERMISSION: {
       const {details} = download;
@@ -125,7 +110,7 @@ export function getStatusTooltipDescription(candidate: ImageCandidate) {
     case CandidateDownloadStatus.UNAPPLIED: {
       return {
         label: t(
-          'This issue was processed before this debug information file was available. To apply new debug information, reprocess this issue. '
+          'This issue was processed before this debug information file was available. To apply new debug information, reprocess this issue.'
         ),
       };
     }

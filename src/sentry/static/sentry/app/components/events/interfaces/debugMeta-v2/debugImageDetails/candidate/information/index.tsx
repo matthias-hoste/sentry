@@ -54,9 +54,16 @@ function Information({
     return null;
   }
 
-  function getExtraDescriptions() {
+  function getDescriptions() {
     if (candidate.download.status !== CandidateDownloadStatus.UNAPPLIED) {
-      return null;
+      return (
+        <DescriptionItem>
+          <Tooltip title={getSourceTooltipDescription(source, builtinSymbolSources)}>
+            <strong>{`${t('Source')}: `}</strong>
+            {source_name ?? t('Unknown')}
+          </Tooltip>
+        </DescriptionItem>
+      );
     }
 
     const {
@@ -70,21 +77,26 @@ function Information({
     const uploadedBeforeEvent = moment(dateCreated).isBefore(eventDateCreated);
 
     const relativeTime = uploadedBeforeEvent
-      ? tct('This debug file was uploaded [when] before this event.', {
-          when: moment(eventDateCreated).from(dateCreated, true),
-        })
-      : tct('This debug file was uploaded [when] after this event.', {
-          when: moment(dateCreated).from(eventDateCreated, true),
-        });
+      ? tct(
+          'This debug file was uploaded [when] before this event. To apply new debug information, reprocess this issue.',
+          {
+            when: moment(eventDateCreated).from(dateCreated, true),
+          }
+        )
+      : tct(
+          'This debug file was uploaded [when] after this event. To apply new debug information, reprocess this issue.',
+          {
+            when: moment(dateCreated).from(eventDateCreated, true),
+          }
+        );
 
     return (
       <DescriptionItem>
         <ExtraDetails>
-          <span>
-            {symbolType === 'proguard' && cpuName === 'any'
-              ? t('proguard mapping')
-              : `${cpuName} (${symbolType}${fileType ? ` ${fileType}` : ''})`}
-          </span>
+          <Tooltip title={getSourceTooltipDescription(source, builtinSymbolSources)}>
+            <strong>{`${t('Source')}: `}</strong>
+            {source_name ?? t('Unknown')}
+          </Tooltip>
           <TimeAndSizeWrapper>
             <TimeWrapper color={uploadedBeforeEvent ? theme.orange300 : theme.error}>
               <IconClock size="xs" />
@@ -96,6 +108,12 @@ function Information({
             {' | '}
             <FileSize bytes={size} />
           </TimeAndSizeWrapper>
+          {' | '}
+          <span>
+            {symbolType === 'proguard' && cpuName === 'any'
+              ? t('proguard mapping')
+              : `${symbolType}${fileType ? ` ${fileType}` : ''}`}
+          </span>
         </ExtraDetails>
       </DescriptionItem>
     );
@@ -104,15 +122,7 @@ function Information({
   return (
     <Wrapper>
       {getMainInfo()}
-      <Descriptions>
-        <DescriptionItem>
-          <Tooltip title={getSourceTooltipDescription(source, builtinSymbolSources)}>
-            <strong>{`${t('Source')}: `}</strong>
-            {source_name ?? t('Unknown')}
-          </Tooltip>
-        </DescriptionItem>
-        {getExtraDescriptions()}
-      </Descriptions>
+      <Descriptions>{getDescriptions()}</Descriptions>
       <Features download={download} />
     </Wrapper>
   );
@@ -131,7 +141,9 @@ const Descriptions = styled('div')`
   color: ${p => p.theme.subText};
 `;
 
-const DescriptionItem = styled('div')``;
+const DescriptionItem = styled('div')`
+  display: flex;
+`;
 
 const ExtraDetails = styled('div')`
   display: flex;
