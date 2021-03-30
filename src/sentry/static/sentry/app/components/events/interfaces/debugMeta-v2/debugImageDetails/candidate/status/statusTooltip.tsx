@@ -7,7 +7,6 @@ import {ImageCandidate} from 'app/types/debugImage';
 
 import {getStatusTooltipDescription} from '../utils';
 
-import Processings from './processings';
 import Status from '.';
 
 type Props = {
@@ -19,22 +18,19 @@ function StatusTooltip({candidate}: Props) {
   const {label, description, disabled} = getStatusTooltipDescription(candidate);
 
   return (
-    <div>
-      <Tooltip
-        title={
-          label && (
-            <Title>
-              <Label>{label}</Label>
-              {description && <div>{description}</div>}
-            </Title>
-          )
-        }
-        disabled={disabled}
-      >
-        <Status status={download.status} />
-      </Tooltip>
-      <Processings candidate={candidate} />
-    </div>
+    <Tooltip
+      title={
+        label && (
+          <Title>
+            <Label>{label}</Label>
+            {description && <div>{description}</div>}
+          </Title>
+        )
+      }
+      disabled={disabled}
+    >
+      <Status status={download.status} />
+    </Tooltip>
   );
 }
 

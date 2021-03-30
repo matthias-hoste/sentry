@@ -48,12 +48,11 @@ function Features({download}: Props) {
 export default Features;
 
 const Wrapper = styled('div')`
-  display: grid;
-  grid-auto-flow: column;
-  grid-column-gap: ${space(1.5)};
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   font-size: ${p => p.theme.fontSizeSmall};
   color: ${p => p.theme.gray300};
-  justify-content: flex-start;
 `;
 
 const Feature = styled('div')`
@@ -61,4 +60,5 @@ const Feature = styled('div')`
   grid-auto-flow: column;
   grid-column-gap: ${space(0.5)};
   align-items: center;
+  padding-right: ${space(1.5)};
 `;

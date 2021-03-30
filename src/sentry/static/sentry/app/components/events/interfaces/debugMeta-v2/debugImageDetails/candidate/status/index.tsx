@@ -9,7 +9,7 @@ type Props = {
   status: CandidateDownloadStatus;
 };
 
-function StatusTag({status}: Props) {
+function Status({status}: Props) {
   switch (status) {
     case CandidateDownloadStatus.OK: {
       return <Tag type="success">{t('Ok')}</Tag>;
@@ -40,4 +40,4 @@ function StatusTag({status}: Props) {
   }
 }
 
-export default StatusTag;
+export default Status;

@@ -70,10 +70,10 @@ function Information({
     const uploadedBeforeEvent = moment(dateCreated).isBefore(eventDateCreated);
 
     const relativeTime = uploadedBeforeEvent
-      ? tct('Uploaded [when] before this event.', {
+      ? tct('This debug file was uploaded [when] before this event.', {
           when: moment(eventDateCreated).from(dateCreated, true),
         })
-      : tct('Uploaded [when] after this event.', {
+      : tct('This debug file was uploaded [when] after this event.', {
           when: moment(dateCreated).from(eventDateCreated, true),
         });
 
@@ -88,7 +88,10 @@ function Information({
           <TimeAndSizeWrapper>
             <TimeWrapper color={uploadedBeforeEvent ? theme.orange300 : theme.error}>
               <IconClock size="xs" />
-              <TimeSince date={dateCreated} tooltipTitle={relativeTime} />
+              <TimeSince
+                date={dateCreated}
+                tooltipTitle={<RelativeTime>{relativeTime}</RelativeTime>}
+              />
             </TimeWrapper>
             {' | '}
             <FileSize bytes={size} />
@@ -99,39 +102,44 @@ function Information({
   }
 
   return (
-    <div>
+    <Wrapper>
       {getMainInfo()}
       <Descriptions>
         <DescriptionItem>
-          {`${t('Source')}: `}
           <Tooltip title={getSourceTooltipDescription(source, builtinSymbolSources)}>
+            <strong>{`${t('Source')}: `}</strong>
             {source_name ?? t('Unknown')}
           </Tooltip>
         </DescriptionItem>
         {getExtraDescriptions()}
       </Descriptions>
       <Features download={download} />
-    </div>
+    </Wrapper>
   );
 }
 
 export default withTheme(Information);
+
+const Wrapper = styled('div')`
+  white-space: pre-wrap;
+  word-break: break-all;
+  max-width: 100%;
+`;
 
 const Descriptions = styled('div')`
   font-size: ${p => p.theme.fontSizeSmall};
   color: ${p => p.theme.subText};
 `;
 
-const DescriptionItem = styled('div')`
-  white-space: pre-wrap;
-  word-break: break-all;
-`;
+const DescriptionItem = styled('div')``;
 
 const ExtraDetails = styled('div')`
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  grid-gap: ${space(3)};
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
+  > * :first-child {
+    padding-right: ${space(3)};
+  }
 `;
 
 const TimeAndSizeWrapper = styled('div')`
@@ -147,4 +155,8 @@ const TimeWrapper = styled('div')<{color?: string}>`
   grid-template-columns: min-content 1fr;
   align-items: center;
   ${p => p.color && `color: ${p.color}`}
+`;
+
+const RelativeTime = styled('div')`
+  padding-bottom: ${space(0.5)};
 `;

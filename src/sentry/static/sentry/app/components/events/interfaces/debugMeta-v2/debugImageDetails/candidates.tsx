@@ -330,7 +330,7 @@ class Candidates extends React.Component<Props, State> {
           )}
         </Header>
         <StyledPanelTable
-          headers={[t('Status'), t('Information'), t('Actions')]}
+          headers={[t('Status'), t('Information'), t('Processing'), t('Actions')]}
           isEmpty={!filteredCandidatesByFilter.length}
           isLoading={isLoading}
           {...this.getEmptyMessage()}
@@ -368,7 +368,6 @@ const Header = styled('div')`
   }
 `;
 
-// Table Title
 const Title = styled('div')`
   padding-right: ${space(4)};
   display: grid;
@@ -380,7 +379,6 @@ const Title = styled('div')`
   margin-bottom: ${space(2)};
 `;
 
-// Search
 const Search = styled('div')`
   flex-grow: 1;
   display: flex;
@@ -427,5 +425,5 @@ const StyledSearchBar = styled(SearchBar)`
 `;
 
 const StyledPanelTable = styled(PanelTable)`
-  grid-template-columns: max-content 1fr max-content;
+  grid-template-columns: max-content minmax(250px, 1fr) max-content max-content;
 `;

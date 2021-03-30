@@ -10,6 +10,7 @@ import {INTERNAL_SOURCE} from '../utils';
 import StatusTooltip from './status/statusTooltip';
 import Actions from './actions';
 import Information from './information';
+import Processings from './processings';
 
 type Props = {
   candidate: ImageCandidate;
@@ -47,6 +48,10 @@ function Candidate({
           eventDateCreated={eventDateCreated}
         />
       </InformationColumn>
+
+      <Column>
+        <Processings candidate={candidate} />
+      </Column>
 
       <ActionsColumn>
         <Actions

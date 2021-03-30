@@ -31,12 +31,12 @@ function Actions({
   onDelete,
 }: Props) {
   const {download, location: debugFileId} = candidate;
+  const {status} = download;
 
   if (!debugFileId || !isInternalSource) {
     return <NotAvailable tooltip={t('Actions not available')} />;
   }
 
-  const {status} = download;
   const deleted = status === CandidateDownloadStatus.DELETED;
 
   const actions = (
@@ -101,7 +101,11 @@ function Actions({
     return actions;
   }
 
-  return <Tooltip title={t('Actions not available')}>{actions}</Tooltip>;
+  return (
+    <Tooltip title={t('Actions not available because this debug file was deleted')}>
+      {actions}
+    </Tooltip>
+  );
 }
 
 export default Actions;

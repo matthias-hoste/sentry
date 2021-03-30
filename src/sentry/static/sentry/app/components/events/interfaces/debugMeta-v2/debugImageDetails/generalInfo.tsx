@@ -60,15 +60,15 @@ const Wrapper = styled('div')`
 
 const Label = styled('div')<{coloredBg?: boolean}>`
   color: ${p => p.theme.textColor};
-  ${p => p.coloredBg && `background-color: ${p.theme.backgroundSecondary};`}
   padding: ${space(1)} ${space(1.5)} ${space(1)} ${space(1)};
+  ${p => p.coloredBg && `background-color: ${p.theme.backgroundSecondary};`}
 `;
 
 const Value = styled(Label)`
-  color: ${p => p.theme.subText};
-  ${p => p.coloredBg && `background-color: ${p.theme.backgroundSecondary};`}
-  padding: ${space(1)};
-  font-family: ${p => p.theme.text.familyMono};
   white-space: pre-wrap;
   word-break: break-all;
+  color: ${p => p.theme.subText};
+  padding: ${space(1)};
+  font-family: ${p => p.theme.text.familyMono};
+  ${p => p.coloredBg && `background-color: ${p.theme.backgroundSecondary};`}
 `;

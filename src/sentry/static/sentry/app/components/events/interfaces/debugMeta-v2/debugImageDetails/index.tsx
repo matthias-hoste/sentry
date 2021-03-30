@@ -17,7 +17,6 @@ import {BuiltinSymbolSource, DebugFile, DebugFileFeature} from 'app/types/debugF
 import {CandidateDownloadStatus, Image, ImageStatus} from 'app/types/debugImage';
 import {Event} from 'app/types/event';
 import {displayReprocessEventAction} from 'app/utils/displayReprocessEventAction';
-import theme from 'app/utils/theme';
 import {getFileType} from 'app/views/settings/projectDebugFiles/utils';
 
 import {getFileName} from '../utils';
